@@ -1,0 +1,17 @@
+#DATA
+DATA/
+
+# Output subfolders (auto-generated plots)
+output/AF/
+output/DP/
+output/HWE/
+output/ID/
+output/IDD/
+output/PSC/
+output/PSI/
+output/QUAL/
+output/SiS/
+output/SN/
+output/ST/
+output/TSTV/
+
