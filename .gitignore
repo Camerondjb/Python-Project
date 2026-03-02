@@ -1,6 +1,14 @@
 #DATA
 DATA/
 
+# Python caches / envs
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local tooling / notebooks
+.ipynb_checkpoints/
+
 # Output subfolders (auto-generated plots)
 output/AF/
 output/DP/

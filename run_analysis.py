@@ -24,10 +24,25 @@ Flags:
     -all : Extracts all sections into separate files.
 """
 
-import subprocess
 import argparse
 import os
 import sys
+import parse_stats
+import make_plots
+
+
+def _run_module_main(module_main, argv):
+    """Run a module main() with temporary sys.argv and return exit code."""
+    original_argv = sys.argv[:]
+    try:
+        sys.argv = argv
+        module_main()
+        return 0
+    except SystemExit as exc:
+        code = exc.code
+        return code if isinstance(code, int) else 1
+    finally:
+        sys.argv = original_argv
 
 def main():
     """Main function to parse .vchk files and generate plots."""
@@ -45,8 +60,11 @@ def main():
     os.makedirs(args.output_folder, exist_ok=True)
     # Parse
     print("Parsing .vchk file...")
-    result = subprocess.run(["python", "parse_stats.py", args.input_file, args.output_folder] + args.flags)
-    if result.returncode != 0:
+    parse_exit_code = _run_module_main(
+        parse_stats.main,
+        ["parse_stats.py", args.input_file, args.output_folder] + args.flags,
+    )
+    if parse_exit_code != 0:
         print("\n Parsing failed")
         sys.exit(8)
         
@@ -55,9 +73,11 @@ def main():
     
     # Plot
     print("\nGenerating plots...")
-    plot_cmd = ["python", "make_plots.py", args.output_folder, basename] + args.flags
-    result = subprocess.run(plot_cmd)
-    if result.returncode != 0:
+    plot_exit_code = _run_module_main(
+        make_plots.main,
+        ["make_plots.py", args.output_folder, basename] + args.flags,
+    )
+    if plot_exit_code != 0:
         print("\n Plotting failed")
         sys.exit(9)
     print("\n COMPLETE!")
